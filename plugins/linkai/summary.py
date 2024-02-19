@@ -13,7 +13,8 @@ class LinkSummary:
             "file": open(file_path, "rb"),
             "name": file_path.split("/")[-1],
         }
-        res = requests.post(url=self.base_url() + "/v1/summary/file", headers=self.headers(), files=file_body, timeout=(5, 180))
+        url = self.base_url() + "/v1/summary/file"
+        res = requests.post(url, headers=self.headers(), files=file_body, timeout=(5, 300))
         return self._parse_summary_res(res)
 
     def summary_url(self, url: str):
@@ -68,10 +69,10 @@ class LinkSummary:
 
         if (sum_config.get("max_file_size") and file_size > sum_config.get("max_file_size")) or file_size > 15000:
             logger.warn(f"[LinkSum] file size exceeds limit, No processing, file_size={file_size}KB")
-            return True
+            return False
 
         suffix = file_path.split(".")[-1]
-        support_list = ["txt", "csv", "docx", "pdf", "md"]
+        support_list = ["txt", "csv", "docx", "pdf", "md", "jpg", "jpeg", "png"]
         if suffix not in support_list:
             logger.warn(f"[LinkSum] unsupported file, suffix={suffix}, support_list={support_list}")
             return False
@@ -82,8 +83,12 @@ class LinkSummary:
         if not url:
             return False
         support_list = ["http://mp.weixin.qq.com", "https://mp.weixin.qq.com"]
+        black_support_list = ["https://mp.weixin.qq.com/mp/waerrpage"]
+        for black_url_prefix in black_support_list:
+            if url.strip().startswith(black_url_prefix):
+                logger.warn(f"[LinkSum] unsupported url, no need to process, url={url}")
+                return False
         for support_url in support_list:
             if url.strip().startswith(support_url):
                 return True
-        logger.warn("[LinkSum] unsupported url")
         return False

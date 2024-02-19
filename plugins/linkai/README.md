@@ -1,6 +1,6 @@
 ## 插件说明
 
-基于 LinkAI 提供的知识库、Midjourney绘画、文档对话等能力对机器人的功能进行增强。平台地址: https://chat.link-ai.tech/console
+基于 LinkAI 提供的知识库、Midjourney绘画、文档对话等能力对机器人的功能进行增强。平台地址: https://link-ai.tech/console
 
 ## 插件配置
 
@@ -25,12 +25,13 @@
     "summary": {
         "enabled": true,              # 文档总结和对话功能开关
         "group_enabled": true,        # 是否支持群聊开启
-        "max_file_size": 10000        # 文件的大小限制，单位KB，默认为10M，超过该大小直接忽略
+        "max_file_size": 5000,        # 文件的大小限制，单位KB，默认为5M，超过该大小直接忽略
+        "type": ["FILE", "SHARING", "IMAGE"]  # 支持总结的类型，分别表示 文件、分享链接、图片，其中文件和链接默认打开，图片默认关闭
     }
 }
 ```
 
-根目录 `config.json` 中配置，`API_KEY` 在 [控制台](https://chat.link-ai.tech/console/interface) 中创建并复制过来:
+根目录 `config.json` 中配置，`API_KEY` 在 [控制台](https://link-ai.tech/console/interface) 中创建并复制过来:
 
 ```bash
 "linkai_api_key": "Link_xxxxxxxxx"
@@ -93,16 +94,16 @@
 
 #### 配置
 
-该功能依赖 LinkAI的知识库及对话功能，需要在项目根目录的config.json中设置 `linkai_api_key`， 同时根据上述插件配置说明，添加 `summary` 部分的配置，设置 `enabled` 为 true。
+该功能依赖 LinkAI的知识库及对话功能，需要在项目根目录的config.json中设置 `linkai_api_key`， 同时根据上述插件配置说明，在插件config.json添加 `summary` 部分的配置，设置 `enabled` 为 true。
 
 如果不想创建 `plugins/linkai/config.json` 配置，可以直接通过 `$linkai sum open` 指令开启该功能。
 
 #### 使用
 
-功能开启后，向机器人发送 **文件** 或 **分享链接卡片** 即可生成摘要，进一步可以与文件或链接的内容进行多轮对话。
+功能开启后，向机器人发送 **文件**、 **分享链接卡片**、**图片** 即可生成摘要，进一步可以与文件或链接的内容进行多轮对话。如果需要关闭某种类型的内容总结，设置 `summary`配置中的type字段即可。
 
 #### 限制
 
- 1. 文件目前 支持 `txt`, `docx`, `pdf`, `md`, `csv`格式，文件大小由 `max_file_size` 限制，最大不超过15M，文件字数最多可支持百万字的文件。但不建议上传字数过多的文件，一是token消耗过大，二是摘要很难覆盖到全部内容，但可以通过多轮对话来了解细节。
+ 1. 文件目前 支持 `txt`, `docx`, `pdf`, `md`, `csv`格式，文件大小由 `max_file_size` 限制，最大不超过15M，文件字数最多可支持百万字的文件。但不建议上传字数过多的文件，一是token消耗过大，二是摘要很难覆盖到全部内容，只能通过多轮对话来了解细节。
  2. 分享链接 目前仅支持 公众号文章，后续会支持更多文章类型及视频链接等
  3. 总结及对话的 费用与 LinkAI 3.5-4K 模型的计费方式相同，按文档内容的tokens进行计算
